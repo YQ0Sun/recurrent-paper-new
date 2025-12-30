@@ -42,7 +42,10 @@ class ECAConv(nn.Module):
         self.act = nn.ReLU()
         self.avg_pool = nn.AdaptiveAvgPool2d(1)
         self.conv1 = nn.Conv1d(1, 1, kernel_size=3, padding=1, dilation=1, bias=False)
-        self.sigmoid = nn.Sigmoid()
+        # 实验431
+        # self.sigmoid = nn.Sigmoid()
+        # 实验432
+        self.sigmoid = h_swish()
 
 
     def forward(self, x):
