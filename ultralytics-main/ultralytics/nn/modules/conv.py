@@ -386,7 +386,7 @@ class Concat(nn.Module):
 
     def forward(self, x):
         """Forward pass for the YOLOv8 mask Proto module."""
-        return torch.cat(x, self.d)
+        return torch.cat(x,self.d)
 
 # 论文：A deep learning model for steel surface defect detection
 class DWConvNoAct(nn.Module):
@@ -429,10 +429,10 @@ class Add(nn.Module):
 
         # Stack tensors along a new dimension (dim=0) and sum them along the same dimension
         # 实验415之前的
-        # stacked = torch.stack(x, dim=0)  # Stack tensors along dim=0
-        # result = torch.sum(stacked, dim=0)  # Sum along dim=0
+        stacked = torch.stack(x, dim=0)  # Stack tensors along dim=0
+        result = torch.sum(stacked, dim=0)  # Sum along dim=0
         # 实验416之后的
-        result = torch.concat(x, dim=1)  # Sum along dim=0
+        # result = torch.concat(x, dim=1)  # Sum along dim=0
         return result
 
 class AddNL(nn.Module):
