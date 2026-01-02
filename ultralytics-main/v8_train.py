@@ -14,8 +14,10 @@ if __name__ == '__main__':
     # result = model.train(data="E:\\SYQ\\xiaorongshiyan2\\zhuyilijizhi\\yolov8-CBAM\\ultralytics-main\\GC-DET.yaml", epochs=200, model="E:\\SYQ\\yolov8-recurrent\\ultralytics-main\\ultralytics\\cfg\\models\\v8\\yolov8_LCBHAM.yaml", imgsz=640, batch=16, workers=2)
 
 # 模型验证
-#     model = YOLO('E:\\SYQ\\yolov8-recurrent\\ultralytics-main\\runs\\detect\\train154\\weights\\best.pt')
-#     result = model.val(data="E:\\SYQ\\xiaorongshiyan2\\zhuyilijizhi\\yolov8-CBAM\\ultralytics-main\\GC-DET.yaml", epochs=200, model="E:\\SYQ\\yolov8-recurrent\\ultralytics-main\\runs\\detect\\train154\\weights\\best.pt", imgsz=640, batch=16, workers=2)
+#     model = YOLO('E:\\SYQ\\yolov8-recurrent\\ultralytics-main\\runs\\detect\\train195\\weights\\best.pt')
+#     model = YOLO('E:\\SYQ\\yolov8-recurrent\\ultralytics-main\\runs\\detect\\train195\\weights\\best.pt')
+    # result = model.val(data="E:\\SYQ\\xiaorongshiyan2\\zhuyilijizhi\\yolov8-CBAM\\ultralytics-main\\GC-DET.yaml", epochs=200, model="E:\\SYQ\\yolov8-recurrent\\ultralytics-main\\runs\\detect\\train195\\weights\\best.pt", imgsz=640, batch=16, workers=2)
+    # result = model.val(data="E:\\SYQ\\yolov8\\ultralytics-main\\ceshi.yaml", epochs=200, model="E:\\SYQ\\yolov8-recurrent\\ultralytics-main\\runs\\detect\\train195\\weights\\best.pt", imgsz=640, batch=16, workers=2)
 
     # 模型推理
     # model = YOLO('runs/detect/yolov8n_exp/best.pt')
