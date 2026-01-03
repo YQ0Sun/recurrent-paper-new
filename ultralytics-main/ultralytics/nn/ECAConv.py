@@ -61,7 +61,7 @@ class ECAConv(nn.Module):
 
         x = F.interpolate(x, size=output.shape[2:], mode='bilinear', align_corners=False)
 
-        return x * y.expand_as(x)  # 可以直接乘
+        return output * y.expand_as(output)  # 可以直接乘
 
 
 # 测试 LCBHAM 模块
