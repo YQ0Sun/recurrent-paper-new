@@ -520,7 +520,7 @@ class ChannelAttention_1(nn.Module):
         # x3 = self.act1(x1 + x2)
         x1 = self.fc(self.Apool(x))
         x2 = self.fc(self.Mpool(x))
-        x3 = self.act(x1 + x2)
+        x3 = x1 + x2
 
         x4 = self.act(self.fc1(x))
         return x * self.act1(x4 + x3)
