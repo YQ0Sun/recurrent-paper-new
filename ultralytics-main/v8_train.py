@@ -6,8 +6,8 @@ if __name__ == '__main__':
     # model.train(**{'cfg':'ultralytics/cfg/exp1.yaml', 'data':'dataset/data.yaml'})
 
     # 使用yaml配置文件来创建模型,并导入预训练权重.
-    model = YOLO('E:\\SYQ\\yolov8-recurrent\\ultralytics-main\\ultralytics\\cfg\\models\\v8\\yolov8-EMAConv.yaml')
-    result = model.train(data="E:\\SYQ\\yolov8\\ultralytics-main\\ceshi.yaml", epochs=200, model="E:\\SYQ\\yolov8-recurrent\\ultralytics-main\\ultralytics\\cfg\\models\\v8\\yolov8-EMAConv.yaml", imgsz=640, batch=16, workers=2)
+    model = YOLO('E:\\SYQ\\yolov8-recurrent\\ultralytics-main\\ultralytics\\cfg\\models\\v8\\yolov8-ECAConv.yaml')
+    result = model.train(data="E:\\SYQ\\yolov8\\ultralytics-main\\ceshi.yaml", epochs=200, model="E:\\SYQ\\yolov8-recurrent\\ultralytics-main\\ultralytics\\cfg\\models\\v8\\yolov8-ECAConv.yaml", imgsz=640, batch=16, workers=2)
     # model = YOLO('E:\\SYQ\\yolov8-recurrent\\ultralytics-main\\ultralytics\\cfg\\models\\v8\\yolov8-C2f-AFPN.yaml')
     # result = model.train(data="E:\\SYQ\\xiaorongshiyan2\\zhuyilijizhi\\yolov8-CBAM\\ultralytics-main\\GC-DET.yaml", epochs=200, model="E:\\SYQ\\yolov8-recurrent\\ultralytics-main\\ultralytics\\cfg\\models\\v8\\yolov8-C2f-AFPN.yaml", imgsz=640, batch=16, workers=2, resume=True)
     # model = YOLO('E:\\SYQ\\yolov8-recurrent\\ultralytics-main\\ultralytics\\cfg\\models\\v8\\yolov8_LCBHAM.yaml')
