@@ -581,9 +581,9 @@ class CBAM_LD_SAM(nn.Module):
 
     def forward(self, x):
         """Applies the forward pass through C1 module."""
-        # channel_attention_out = self.channel_attention(x) * x
+        channel_attention_out = self.channel_attention(x) * x
         # weight = torch.sigmoid(self.weight(x))  # self.weight(x) 返回 Tensor
-        channel_attention_out = self.channel_attention(x)
+        # channel_attention_out = self.channel_attention(x)
         return self.spatial_attention(channel_attention_out)
 
 
