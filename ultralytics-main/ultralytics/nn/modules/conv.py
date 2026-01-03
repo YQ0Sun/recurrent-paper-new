@@ -515,12 +515,15 @@ class ChannelAttention_1(nn.Module):
         self.bn = nn.BatchNorm2d(channels)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x1 = self.act(self.fc(self.Apool(x)))
-        x2 = self.act(self.fc(self.Mpool(x)))
-        x3 = self.act1(x1 + x2)
+        # x1 = self.act(self.fc(self.Apool(x)))
+        # x2 = self.act(self.fc(self.Mpool(x)))
+        # x3 = self.act1(x1 + x2)
+        x1 = self.fc(self.Apool(x))
+        x2 = self.fc(self.Mpool(x))
+        x3 = self.act(x1 + x2)
 
         x4 = self.act(self.fc1(x))
-        return (x + x4) * x3
+        return x * self.act1(x4 + x3)
 
 class ChannelAttentionWithSkip(nn.Module):
     """Channel-attention module with skip connection."""
