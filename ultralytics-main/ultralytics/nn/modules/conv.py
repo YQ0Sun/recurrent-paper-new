@@ -515,12 +515,12 @@ class ChannelAttention_1(nn.Module):
         self.bn = nn.BatchNorm2d(channels)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x1 = self.act(self.Apool(x))
-        x2 = self.act(self.Mpool(x))
+        x1 = self.act(self.fc(self.Apool(x)))
+        x2 = self.act(self.fc(self.Mpool(x)))
         x3 = self.act1(x1 + x2)
 
         x4 = self.act(self.fc1(x))
-        return (x4 + x) * x3
+        return (x + x4) * x3
 
 class ChannelAttentionWithSkip(nn.Module):
     """Channel-attention module with skip connection."""
@@ -581,9 +581,9 @@ class CBAM_LD_SAM(nn.Module):
 
     def forward(self, x):
         """Applies the forward pass through C1 module."""
-        channel_attention_out = self.channel_attention(x) * x
+        # channel_attention_out = self.channel_attention(x) * x
         # weight = torch.sigmoid(self.weight(x))  # self.weight(x) 返回 Tensor
-        # channel_attention_out = self.channel_attention(x)
+        channel_attention_out = self.channel_attention(x)
         return self.spatial_attention(channel_attention_out)
 
 
