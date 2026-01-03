@@ -508,7 +508,7 @@ class ChannelAttention_1(nn.Module):
         self.Apool = nn.AdaptiveAvgPool2d(1)
         self.Mpool = nn.AdaptiveMaxPool2d(1)
         self.fc = nn.Conv2d(channels, channels, 1, 1, 0, bias=True)
-        self.fc_3 = nn.Conv2d(channels, channels, 3, 2, 0, bias=True)
+        self.fc_3 = nn.Conv2d(channels, channels, 3, 1, 1, bias=True)
         self.fc_5 = nn.Conv2d(channels, channels, 5, 1, 2, groups=channels, bias=True)
         self.act = nn.ReLU()
         # self.softmax = nn.Softmax(-1)
