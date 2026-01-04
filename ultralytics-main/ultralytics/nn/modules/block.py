@@ -573,28 +573,29 @@ class C2f_with_weight(nn.Module):
         )  # Bottleneck layers
 
         # Add weight scaling modules for each Bottleneck layer
-        self.weight_modules = nn.ModuleList(
-            # train35 have sigmoid(weight) Conv
-            # Conv(self.c, self.c, 1, 1) for _ in range(n)
-            # train38 use DWConv use sigmoid
-            # DWConv(self.c, self.c, 1, 1) for _ in range(n)
-            # train40 Conv sigmoid DWBottleneck5 效果好
-            Conv(self.c, self.c, 1, 1) for _ in range(n)
-        )
+        # self.weight_modules = nn.ModuleList(
+        #     # train35 have sigmoid(weight) Conv
+        #     # Conv(self.c, self.c, 1, 1) for _ in range(n)
+        #     # train38 use DWConv use sigmoid
+        #     # DWConv(self.c, self.c, 1, 1) for _ in range(n)
+        #     # train40 Conv sigmoid DWBottleneck5 效果好
+        #     Conv(self.c, self.c, 1, 1) for _ in range(n)
+        # )
 
     def forward(self, x):
         """Forward pass through C2f layer with weight scaling."""
         y = list(self.cv1(x).chunk(2, 1))  # Split input into two parts
-        for i, m in enumerate(self.m):
-            bottleneck_out = m(y[-1])  # Pass through Bottleneck
-            weight = self.weight_modules[i](bottleneck_out)  # Compute weight
-            # train37 use torch.softmax Conv sigmoidc
-            # scaled_out = bottleneck_out * torch.softmax(weight, dim=1)  # Scale with sigmoid of weight
-            # train35 have sigmoid(weight) Conv sigmoid
-            scaled_out = bottleneck_out * torch.sigmoid(weight)  # Scale with sigmoid of weight
-            # train36 don't use sigmoid(weight) sigmoid use Conv
-            # scaled_out = bottleneck_out * weight  # Scale with sigmoid of weight
-            y.append(scaled_out)  # Append scaled output to list
+        y.extend([m(y[-1]) for m in self.m])
+        # for i, m in enumerate(self.m):
+        #     bottleneck_out = m(y[-1])  # Pass through Bottleneck
+        #     weight = self.weight_modules[i](bottleneck_out)  # Compute weight
+        #     # train37 use torch.softmax Conv sigmoidc
+        #     # scaled_out = bottleneck_out * torch.softmax(weight, dim=1)  # Scale with sigmoid of weight
+        #     # train35 have sigmoid(weight) Conv sigmoid
+        #     scaled_out = bottleneck_out * torch.sigmoid(weight)  # Scale with sigmoid of weight
+        #     # train36 don't use sigmoid(weight) sigmoid use Conv
+        #     # scaled_out = bottleneck_out * weight  # Scale with sigmoid of weight
+        #     y.append(scaled_out)  # Append scaled output to list
         return self.cv2(torch.cat(y, 1))  # Concatenate and pass through final Conv
 
     # def forward(self, x):
