@@ -565,11 +565,11 @@ class C2f_with_weight(nn.Module):
             # train35 到 train38都是这个
             # Bottleneck(self.c, self.c, shortcut, g, k=((3, 3), (3, 3)), e=1.0) for _ in range(n)
             # train39 DWConv sigmoid DWBottleneck5
-            # DWBottleneck5(self.c, self.c, shortcut, g, e=1.0) for _ in range(n)
+            DWBottleneck5(self.c, self.c, shortcut, g, e=1.0) for _ in range(n)
             # train41 在train40的基础上将DWBottleneck5替换成DWBottleneck5_CBAM_new
             # DWBottleneck5_CBAM_new(self.c, self.c, shortcut, g, e=1.0) for _ in range(n)
             # DWBottleneck5_CBAM(self.c, self.c, shortcut, g, e=1.0) for _ in range(n)
-            DWBottleneck5_CBAM_LD_SAM(self.c, self.c, shortcut, g, e=1.0) for _ in range(n)
+            # DWBottleneck5_CBAM_LD_SAM(self.c, self.c, shortcut, g, e=1.0) for _ in range(n)
         )  # Bottleneck layers
 
         # Add weight scaling modules for each Bottleneck layer
