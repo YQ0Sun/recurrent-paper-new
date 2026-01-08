@@ -522,7 +522,7 @@ class ChannelAttention_1(nn.Module):
 
         x4 = self.fc_3(self.fc(x))
         x5 = self.fc_5(self.fc(x))
-        return self.bn(self.fc(self.act1(self.bn(x4 + x5 + x)))) * x3
+        return self.fc(self.fc(self.act1(self.bn(x4 + x5))) + x) * x3
 
 class ChannelAttentionWithSkip(nn.Module):
     """Channel-attention module with skip connection."""
