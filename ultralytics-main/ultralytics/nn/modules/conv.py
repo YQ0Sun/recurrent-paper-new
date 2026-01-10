@@ -508,10 +508,8 @@ class ChannelAttention_1(nn.Module):
         self.Apool = nn.AdaptiveAvgPool2d(1)
         self.Mpool = nn.AdaptiveMaxPool2d(1)
         self.fc = nn.Conv2d(channels, channels, 1, 1, 0, bias=True)
-        self.fc_3 = nn.Conv2d(channels, channels, 3, 1, 1, bias=True)
-        self.fc_5 = nn.Conv2d(channels, channels, 5, 1, 2, groups=channels, bias=True)
+        self.fc1 = nn.Conv2d(channels, channels, 5, 1, 1, groups=channels, dilation=d, bias=True)
         self.act = nn.ReLU()
-        # self.softmax = nn.Softmax(-1)
         self.act1 = nn.Sigmoid()
         self.bn = nn.BatchNorm2d(channels)
 
@@ -520,9 +518,11 @@ class ChannelAttention_1(nn.Module):
         x2 = self.act(self.fc(self.Mpool(x)))
         x3 = self.act1(x1 + x2)
 
-        x4 = self.fc_3(self.fc(x))
-        x5 = self.fc_5(self.fc(x))
-        return self.fc(self.fc(self.act1(self.bn(x4 + x5))) + x3) + x3
+        x4 = self.fc(self.act(self.bn(self.fc1(self.fc(x)))))
+        x5 = x4 + x
+        x6 = self.fc(x5)
+        return x6 + x3
+
 
 class ChannelAttentionWithSkip(nn.Module):
     """Channel-attention module with skip connection."""
