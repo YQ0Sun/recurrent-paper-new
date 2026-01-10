@@ -521,7 +521,7 @@ class ChannelAttention_1(nn.Module):
         x4 = self.fc(self.act(self.bn(self.fc1(self.fc(x)))))
         x5 = x4 + x
         x6 = self.fc(x5)
-        return x6 + x3
+        return x6 * x3
 
 
 
