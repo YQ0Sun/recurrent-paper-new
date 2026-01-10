@@ -503,12 +503,12 @@ class h_swish(nn.Module):
     # self.act = nn.Sigmoid()
 class ChannelAttention_1(nn.Module):
 
-    def __init__(self, channels: int) -> None:
+    def __init__(self, channels: int, d = 1) -> None:
         super().__init__()
         self.Apool = nn.AdaptiveAvgPool2d(1)
         self.Mpool = nn.AdaptiveMaxPool2d(1)
         self.fc = nn.Conv2d(channels, channels, 1, 1, 0, bias=True)
-        self.fc1 = nn.Conv2d(channels, channels, 5, 1, 1, bias=True)
+        self.fc1 = nn.Conv2d(channels, channels, 5, 1, padding=d * (5 - 1) // 2, groups=channels, dilation=d, bias=True)
         self.act = nn.ReLU()
         self.act1 = nn.Sigmoid()
         self.bn = nn.BatchNorm2d(channels)
@@ -522,6 +522,7 @@ class ChannelAttention_1(nn.Module):
         x5 = x4 + x
         x6 = self.fc(x5)
         return x6 + x3
+
 
 
 class ChannelAttentionWithSkip(nn.Module):
