@@ -501,28 +501,54 @@ class h_swish(nn.Module):
     # self.pool = nn.AdaptiveAvgPool2d(1)
     # self.fc = nn.Conv2d(channels, channels, 1, 1, 0, bias=True)
     # self.act = nn.Sigmoid()
+
+# class ChannelAttention_1(nn.Module):
+#
+#     def __init__(self, channels: int) -> None:
+#         super().__init__()
+#         self.Apool = nn.AdaptiveAvgPool2d(1)
+#         self.Mpool = nn.AdaptiveMaxPool2d(1)
+#         self.fc = nn.Conv2d(channels, channels, 1, 1, 0, bias=True)
+#         self.fc1 = nn.Conv2d(channels, channels, 5, 1, 2, groups=channels, bias=True)
+#         self.act = nn.ReLU()
+#         # self.softmax = nn.Softmax(-1)
+#         self.act1 = nn.Sigmoid()
+#         self.bn = nn.BatchNorm2d(channels)
+#
+#     def forward(self, x: torch.Tensor) -> torch.Tensor:
+#         x1 = self.act(self.fc(self.Apool(x)))
+#         x2 = self.act(self.fc(self.Mpool(x)))
+#         x3 = self.act1(x1 + x2)
+#
+#         x4 = self.fc(self.act(self.bn(self.fc1(self.fc(x)))))
+#         x5 = x4 + x
+#         x6 = self.fc(x5)
+#         return x6 * x3
 class ChannelAttention_1(nn.Module):
 
-    def __init__(self, channels: int, d = 1) -> None:
+    def __init__(self, channels: int) -> None:
         super().__init__()
         self.Apool = nn.AdaptiveAvgPool2d(1)
         self.Mpool = nn.AdaptiveMaxPool2d(1)
         self.fc = nn.Conv2d(channels, channels, 1, 1, 0, bias=True)
-        self.fc1 = nn.Conv2d(channels, channels, 5, 1, padding=d * (5 - 1) // 2, groups=channels, dilation=d, bias=True)
+        self.fc_3 = nn.Conv2d(channels, channels, 3, 1, 1, bias=True)
+        self.fc_5 = nn.Conv2d(channels, channels, 5, 1, 2, groups=channels, bias=True)
         self.act = nn.ReLU()
+        # self.softmax = nn.Softmax(-1)
         self.act1 = nn.Sigmoid()
         self.bn = nn.BatchNorm2d(channels)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x1 = self.act(self.fc(self.Apool(x)))
-        x2 = self.act(self.fc(self.Mpool(x)))
-        x3 = self.act1(x1 + x2)
+        # x1 = self.act(self.fc(self.Apool(x)))
+        # x2 = self.act(self.fc(self.Mpool(x)))
+        # x3 = self.act1(x1 + x2)
+        x1 = self.Apool(x)
+        x2 = self.Mpool(x)
+        x3 = x1 + x2
 
-        x4 = self.fc(self.act(self.bn(self.fc1(self.fc(x)))))
-        x5 = x4 + x
-        x6 = self.fc(x5)
-        return x6 * x3
-
+        x4 = self.fc_3(x)
+        x5 = self.fc_5(x)
+        return x * self.act1(x3 + x4 + x5)
 
 
 class ChannelAttentionWithSkip(nn.Module):
