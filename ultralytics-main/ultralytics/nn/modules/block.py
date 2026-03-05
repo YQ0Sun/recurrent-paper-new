@@ -833,7 +833,7 @@ class DWBottleneck5_CBAM_LD_SAM(nn.Module):
         """'forward()' applies the YOLO FPN to input data."""
         y1 = self.cv2(self.cv1(x))
         y2 = self.cbam_ld_sam(x)
-        return y1 + x if self.add else y1
+        return y1 + y2 if self.add else y1
 
 class DWBottleneck5_CBAM(nn.Module):
     """Standard bottleneck."""
