@@ -165,7 +165,7 @@ class LCBHAM(nn.Module):
     def forward(self, x):
         output = self.conv(x)
         output = self.bn(output)
-        output = self.act(output)
+        x = self.act(output)
 
         lcam_out = self.lcam(x)
         # output = output + x
