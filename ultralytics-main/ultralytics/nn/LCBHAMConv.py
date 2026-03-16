@@ -148,51 +148,52 @@ class GhostConv(nn.Module):
         return torch.cat((y, self.cv2(y)), 1)
 
 # LCBHAM 模块
-# class LCBHAM(nn.Module):
-#     def __init__(self, channel):
-#         super(LCBHAM, self).__init__()
-#         self.conv = nn.Conv2d(channel, channel, kernel_size=3, stride=2, padding=1)  # k=3, s=2
-#         # self.conv = GhostConv(channel, channel, k=3, s=2)
-#
-#         self.bn = nn.GroupNorm(num_groups=32, num_channels=channel)
-#         # 实验412
-#         # self.act = h_swish()
-#         self.act = h_sigmoid()
-#         # self.lcam = LCAM(channel)
-#         # self.ld_sam = LD_SAM()
-#
-#     def forward(self, x):
-#         output = self.conv(x)
-#         output = self.bn(output)
-#         output = self.act(output)
-#
-#         # lcam_out = self.lcam(x)
-#         output = output + x
-#         # lcam_out = x * lcam_out
-#
-#         # ld_sam_out = self.ld_sam(lcam_out)
-#         # output = ld_sam_out * lcam_out
-#
-#         return output
-
 class LCBHAM(nn.Module):
     def __init__(self, channel):
-        super().__init__()
-        self.conv = nn.Conv2d(channel, channel, kernel_size=3, stride=2, padding=1)
-        self.bn = nn.GroupNorm(num_groups=32, num_channels=channel)
-        self.act = nn.ReLU()
+        super(LCBHAM, self).__init__()
+        self.conv = nn.Conv2d(channel, channel, kernel_size=3, stride=2, padding=1)  # k=3, s=2
+        # self.conv = GhostConv(channel, channel, k=3, s=2)
 
-        # shortcut 卷积，用于匹配尺寸
-        self.shortcut = nn.Conv2d(channel, channel, kernel_size=1, stride=2, bias=False)
+        # self.bn = nn.GroupNorm(num_groups=32, num_channels=channel)
+        self.bn = nn.BatchNorm2d(channel)
+        # 实验412
+        self.act = h_swish()
+        # self.act = h_sigmoid()
+        self.lcam = LCAM(channel)
+        self.ld_sam = LD_SAM()
 
     def forward(self, x):
         output = self.conv(x)
         output = self.bn(output)
         output = self.act(output)
 
-        x_res = self.shortcut(x)  # 让 x 和 output 尺寸一致
-        output = output + x_res
+        lcam_out = self.lcam(x)
+        # output = output + x
+        lcam_out = x * lcam_out
+
+        ld_sam_out = self.ld_sam(lcam_out)
+        output = ld_sam_out * lcam_out
+
         return output
+
+# class LCBHAM(nn.Module):
+#     def __init__(self, channel):
+#         super().__init__()
+#         self.conv = nn.Conv2d(channel, channel, kernel_size=3, stride=2, padding=1)
+#         self.bn = nn.GroupNorm(num_groups=32, num_channels=channel)
+#         self.act = nn.ReLU()
+#
+#         # shortcut 卷积，用于匹配尺寸
+#         self.shortcut = nn.Conv2d(channel, channel, kernel_size=1, stride=2, bias=False)
+#
+#     def forward(self, x):
+#         output = self.conv(x)
+#         output = self.bn(output)
+#         output = self.act(output)
+#
+#         x_res = self.shortcut(x)  # 让 x 和 output 尺寸一致
+#         output = output + x_res
+#         return output
 
 
 # 测试 LCBHAM 模块
