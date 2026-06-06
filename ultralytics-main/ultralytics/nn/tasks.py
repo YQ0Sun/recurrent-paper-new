@@ -27,6 +27,7 @@ from ultralytics.nn.ECAConv import ECAConv
 from ultralytics.nn.EMAConv import EMAConv
 from ultralytics.nn.CoordAttention import CoordAttention
 from ultralytics.nn.my_MAN_CBAM_attention_v1 import CBAM_MLKA_LD_SAM, CBAM_MLKA, CBAM_LCAM_MLKA
+from ultralytics.utils.plotting import feature_visualization,feature_visualization_merged
 
 try:
     import thop
@@ -90,6 +91,7 @@ class BaseModel(nn.Module):
             y.append(x if m.i in self.save else None)  # save output
             if visualize:
                 feature_visualization(x, m.type, m.i, save_dir=visualize)
+                feature_visualization_merged(x, m.type, m.i, save_dir=visualize, merge_mode="sum")  # 添加的代码
         return x
 
     def _predict_augment(self, x):

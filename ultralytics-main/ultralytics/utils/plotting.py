@@ -137,6 +137,28 @@ class Annotator:
             #                 thickness=self.tf,
             #                 lineType=cv2.LINE_AA)
 
+            p1, p2 = (int(box[0]), int(box[1])), (int(box[2]), int(box[3]))
+            cv2.rectangle(self.im, p1, p2, color, thickness=self.lw, lineType=cv2.LINE_AA)
+            if label:
+                # 1. 在这里统一定义新的字体大小和粗细
+                new_sf = self.sf * 0.5  # 放大字体（1.5倍，可根据需要微调）
+                new_tf = self.tf + 3  # 加粗字体（在原粗细上加2，数字越大越粗，图2的效果通常需要加粗）
+
+                # 2. 计算文字宽高时，必须使用新的 new_sf 和 new_tf，保证背景色块能完全包住文字
+                w, h = cv2.getTextSize(label, 0, fontScale=new_sf, thickness=new_tf)[0]  # text width, height
+                outside = p1[1] - h >= 3
+                p2 = p1[0] + w, p1[1] - h - 3 if outside else p1[1] + h + 3
+                cv2.rectangle(self.im, p1, p2, color, -1, cv2.LINE_AA)  # filled
+
+                # 3. 绘制文字时，也使用新的 new_sf 和 new_tf
+                cv2.putText(self.im,
+                            label, (p1[0], p1[1] - 2 if outside else p1[1] + h + 2),
+                            0,
+                            new_sf,  # 使用放大后的字体大小
+                            txt_color,
+                            thickness=new_tf,  # 使用加粗后的字体线条
+                            lineType=cv2.LINE_AA)
+
 
             # p1, p2 = (int(box[0]), int(box[1])), (int(box[2]), int(box[3]))
             # cv2.rectangle(self.im, p1, p2, color, thickness=self.lw, lineType=cv2.LINE_AA)
@@ -228,75 +250,75 @@ class Annotator:
             #                     0, font_scale, txt_color,
             #                     thickness=self.tf, lineType=cv2.LINE_AA)
             #         self.drawn_labels.setdefault(label, []).append(text_box)
-            if not hasattr(self, 'drawn_labels'):
-                self.drawn_labels = []
-
-            p1, p2 = (int(box[0]), int(box[1])), (int(box[2]), int(box[3]))
-            cv2.rectangle(self.im, p1, p2, color, thickness=self.lw, lineType=cv2.LINE_AA)
-
-            if label:
-                # 🔹 提取概率部分，只显示数值
-                m = re.search(r"(\d+\.\d+|\.\d+|\d+)", label)
-                if m:
-                    conf = float(m.group(1))
-                    display_text = f"{conf:.2f}"  # 显示 0.85
-                    # display_text = f"{conf*100:.1f}%"  # 显示百分比形式
-                else:
-                    display_text = label
-
-                # 字体缩放（NEU 模型）
-                font_scale = self.sf / 2
-                w, h = cv2.getTextSize(display_text, 0, fontScale=font_scale, thickness=self.tf)[0]
-                outside = p1[1] - h >= 3
-
-                # 默认位置（框上方）
-                text_x = p1[0]
-                text_y = p1[1] - 2 if outside else p1[1] + h + 2
-                box_x1, box_y1 = text_x, text_y - h if outside else text_y - h
-                box_x2, box_y2 = text_x + w, text_y
-
-                # 获取图像大小
-                img_h, img_w = self.im.shape[:2]
-
-                # 🔹 边界检查
-                if box_x2 > img_w:
-                    shift = box_x2 - img_w + 5
-                    text_x -= shift
-                    box_x1 -= shift
-                    box_x2 -= shift
-                if box_y1 < 0:
-                    text_y = p1[1] + h + 2
-                    box_y1 = p1[1]
-                    box_y2 = p1[1] + h + 3
-
-                # 🔹 检查重叠并尝试移动
-                moved = False
-                overlap = True
-                max_attempts = 5  # 最多尝试移动几次避免重叠
-                dy, dx = 10, 0  # 每次向下移动 10 像素
-
-                while overlap and max_attempts > 0:
-                    overlap = False
-                    for prev_box in self.drawn_labels:
-                        x1_min, y1_min, x1_max, y1_max = box_x1, box_y1, box_x2, box_y2
-                        x2_min, y2_min, x2_max, y2_max = prev_box
-                        if not (x1_max < x2_min or x1_min > x2_max or y1_max < y2_min or y1_min > y2_max):
-                            # 重叠，移动文字框
-                            box_y1 += dy
-                            box_y2 += dy
-                            text_y += dy
-                            overlap = True
-                            moved = True
-                            break
-                    max_attempts -= 1
-
-                # 🔹 记录已绘制的区域
-                self.drawn_labels.append((box_x1, box_y1, box_x2, box_y2))
-
-                # 🔹 绘制概率文本
-                cv2.rectangle(self.im, (box_x1, box_y1), (box_x2, box_y2), color, -1, cv2.LINE_AA)
-                cv2.putText(self.im, display_text, (text_x, text_y), 0, font_scale, txt_color,
-                            thickness=self.tf, lineType=cv2.LINE_AA)
+            # if not hasattr(self, 'drawn_labels'):
+            #     self.drawn_labels = []
+            #
+            # p1, p2 = (int(box[0]), int(box[1])), (int(box[2]), int(box[3]))
+            # cv2.rectangle(self.im, p1, p2, color, thickness=self.lw, lineType=cv2.LINE_AA)
+            #
+            # if label:
+            #     # 🔹 提取概率部分，只显示数值
+            #     m = re.search(r"(\d+\.\d+|\.\d+|\d+)", label)
+            #     if m:
+            #         conf = float(m.group(1))
+            #         display_text = f"{conf:.2f}"  # 显示 0.85
+            #         # display_text = f"{conf*100:.1f}%"  # 显示百分比形式
+            #     else:
+            #         display_text = label
+            #
+            #     # 字体缩放（NEU 模型）
+            #     font_scale = self.sf / 2
+            #     w, h = cv2.getTextSize(display_text, 0, fontScale=font_scale, thickness=self.tf)[0]
+            #     outside = p1[1] - h >= 3
+            #
+            #     # 默认位置（框上方）
+            #     text_x = p1[0]
+            #     text_y = p1[1] - 2 if outside else p1[1] + h + 2
+            #     box_x1, box_y1 = text_x, text_y - h if outside else text_y - h
+            #     box_x2, box_y2 = text_x + w, text_y
+            #
+            #     # 获取图像大小
+            #     img_h, img_w = self.im.shape[:2]
+            #
+            #     # 🔹 边界检查
+            #     if box_x2 > img_w:
+            #         shift = box_x2 - img_w + 5
+            #         text_x -= shift
+            #         box_x1 -= shift
+            #         box_x2 -= shift
+            #     if box_y1 < 0:
+            #         text_y = p1[1] + h + 2
+            #         box_y1 = p1[1]
+            #         box_y2 = p1[1] + h + 3
+            #
+            #     # 🔹 检查重叠并尝试移动
+            #     moved = False
+            #     overlap = True
+            #     max_attempts = 5  # 最多尝试移动几次避免重叠
+            #     dy, dx = 10, 0  # 每次向下移动 10 像素
+            #
+            #     while overlap and max_attempts > 0:
+            #         overlap = False
+            #         for prev_box in self.drawn_labels:
+            #             x1_min, y1_min, x1_max, y1_max = box_x1, box_y1, box_x2, box_y2
+            #             x2_min, y2_min, x2_max, y2_max = prev_box
+            #             if not (x1_max < x2_min or x1_min > x2_max or y1_max < y2_min or y1_min > y2_max):
+            #                 # 重叠，移动文字框
+            #                 box_y1 += dy
+            #                 box_y2 += dy
+            #                 text_y += dy
+            #                 overlap = True
+            #                 moved = True
+            #                 break
+            #         max_attempts -= 1
+            #
+            #     # 🔹 记录已绘制的区域
+            #     self.drawn_labels.append((box_x1, box_y1, box_x2, box_y2))
+            #
+            #     # 🔹 绘制概率文本
+            #     cv2.rectangle(self.im, (box_x1, box_y1), (box_x2, box_y2), color, -1, cv2.LINE_AA)
+            #     cv2.putText(self.im, display_text, (text_x, text_y), 0, font_scale, txt_color,
+            #                 thickness=self.tf, lineType=cv2.LINE_AA)
 
     def masks(self, masks, colors, im_gpu, alpha=0.5, retina_masks=False):
         """
@@ -852,3 +874,42 @@ def feature_visualization(x, module_type, stage, n=32, save_dir=Path('runs/detec
         plt.savefig(f, dpi=300, bbox_inches='tight')
         plt.close()
         np.save(str(f.with_suffix('.npy')), x[0].cpu().numpy())  # npy save
+
+def feature_visualization_merged(x, module_type, stage, merge_mode="mean", save_dir=Path("runs/detect/exp")):
+    """
+    Visualize merged feature maps of a given model module during inference.
+    Args:
+        x (torch.Tensor): Features to be visualized.
+        module_type (str): Module type.
+        stage (int): Module stage within the model.
+        merge_mode (str, optional): Mode to merge channels. Defaults to "mean". Options: "mean", "sum", "max".
+        save_dir (Path, optional): Directory to save results. Defaults to Path('runs/detect/exp').
+    """
+    for m in {"Detect", "Segment", "Pose", "Classify", "OBB", "RTDETRDecoder"}:  # all model heads
+        if m in module_type:
+            return
+    if isinstance(x, torch.Tensor):
+        _, channels, height, width = x.shape  # batch, channels, height, width
+        if height > 1 and width > 1:
+            # Save path
+            save_dir.mkdir(parents=True, exist_ok=True)
+            f = save_dir / f"stage{stage}_{module_type.split('.')[-1]}_merged_features.png"
+
+            # Merge channels
+            if merge_mode == "mean":
+                merged_feature = x[0].mean(dim=0).cpu()  # Channel-wise mean
+            elif merge_mode == "sum":
+                merged_feature = x[0].sum(dim=0).cpu()  # Channel-wise sum
+            elif merge_mode == "max":
+                merged_feature, _ = x[0].max(dim=0)  # Channel-wise max
+                merged_feature = merged_feature.cpu()
+            else:
+                raise ValueError(f"Unsupported merge_mode: {merge_mode}. Choose from 'mean', 'sum', 'max'.")
+
+            # Visualize
+            plt.figure(figsize=(6, 6))
+            plt.imshow(merged_feature, cmap="viridis")  # Use colormap for visualization
+            plt.axis("off")
+            plt.title(f"Stage {stage}: {module_type} (Merged: {merge_mode})")
+            plt.savefig(f)
+            plt.close()

@@ -6,9 +6,9 @@ import os
 
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 if __name__ == '__main__':
-    model = YOLO('E:\\SYQ\\yolov8-recurrent\\ultralytics-main\\runs\\detect\\train\\weights\\best.pt') # loading pretrain weights
+    model = YOLO('E:\\SYQ\\yolov8-recurrent\\ultralytics-main\\runs\\detect\\train213\\weights\\best.pt') # loading pretrain weights
     results = model.predict(
-                  model="E:\\SYQ\\yolov8-recurrent\\ultralytics-main\\runs\\detect\\train\\weights\\best.pt",
+                  model="E:\\SYQ\\yolov8-recurrent\\ultralytics-main\\runs\\detect\\train213\\weights\\best.pt",
                   project='neu-experiments',
                   name='predict',
                   conf=0.3,
